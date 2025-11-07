@@ -3,36 +3,42 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml" prefWidth="800" prefHeight="600">
-    <!-- Menú superior -->
-    <top>
-        <MenuBar>
-            <menus>
-                <Menu text="File">
-                    <items>
-                        <MenuItem text="Close" />
-                    </items>
-                </Menu>
-                <Menu text="Help">
-                    <items>
-                        <MenuItem text="Manual" />
-                        <MenuItem text="Ayuda" />
-                    </items>
-                </Menu>
-                <Menu text="Sobre Nosotros">
-                    <items>
-                        <MenuItem text="Acerca de..." />
-                    </items>
-                </Menu>
-            </menus>
-        </MenuBar>
-    </top>
+<GridPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+          fx:controller="org.example.MainController"
+          hgap="20" vgap="15" alignment="CENTER"
+          prefWidth="900" prefHeight="600" style="-fx-padding: 20;">
 
-    <!-- Centro dividido en barra lateral + contenido -->
-    <center>
+    <!-- Clave -->
+    <Label text="Clave:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+    <TextField fx:id="claveField" promptText="Introduce la clave..." GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 
+    <!-- Entrada -->
+    <Label text="Entrada (texto o archivo):" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+    <VBox spacing="10" GridPane.columnIndex="0" GridPane.rowIndex="2">
+        <TextArea fx:id="inputArea" promptText="Introduce el texto aquí..." prefRowCount="12"/>
+        <HBox spacing="10">
+            <Button text="Seleccionar archivo..." fx:id="btnCargarArchivo"/>
+            <Label fx:id="archivoSeleccionadoLabel" text="Ningún archivo seleccionado"/>
+        </HBox>
+    </VBox>
 
+    <!-- Resultado -->
+    <Label text="Resultado:" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+    <VBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="2">
+        <TextArea fx:id="outputArea" editable="false" prefRowCount="12"/>
+    </VBox>
 
+    <!-- Botones de acción -->
+    <HBox spacing="15" alignment="CENTER" GridPane.columnSpan="2" GridPane.rowIndex="3">
+        <Button text="Cifrar" fx:id="btnCifrar"/>
+        <Button text="Descifrar" fx:id="btnDescifrar"/>
+    </HBox>
 
-    </center>
-</BorderPane>
+    <!-- Guardar resultado -->
+    <HBox spacing="10" GridPane.columnSpan="2" GridPane.rowIndex="4">
+        <Label text="Guardar resultado en:"/>
+        <TextField fx:id="outputPathField" promptText="Ruta del archivo de salida..."/>
+        <Button text="Guardar archivo" fx:id="btnGuardarArchivo"/>
+    </HBox>
+
+</GridPane>
