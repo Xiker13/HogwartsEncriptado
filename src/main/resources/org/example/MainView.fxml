@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml" prefWidth="800" prefHeight="600">
+    <!-- Menú superior -->
+    <top>
+        <MenuBar>
+            <menus>
+                <Menu text="File">
+                    <items>
+                        <MenuItem text="Close" />
+                    </items>
+                </Menu>
+                <Menu text="Help">
+                    <items>
+                        <MenuItem text="Manual" />
+                        <MenuItem text="Ayuda" />
+                    </items>
+                </Menu>
+                <Menu text="Sobre Nosotros">
+                    <items>
+                        <MenuItem text="Acerca de..." />
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
+    </top>
+
+    <!-- Centro dividido en barra lateral + contenido -->
+    <center>
+
+    </center>
+</BorderPane>
