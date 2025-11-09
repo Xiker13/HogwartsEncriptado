@@ -1,4 +1,4 @@
-package org.example;
+package org.hogwartsencriptado;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;

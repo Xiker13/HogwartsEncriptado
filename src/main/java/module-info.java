@@ -1,7 +1,7 @@
-module org.example {
+module org.hogwartsencriptado {
     requires javafx.controls;
     requires javafx.fxml;
 
-    opens org.example to javafx.fxml;
-    exports org.example;
+    opens org.hogwartsencriptado to javafx.fxml;
+    exports org.hogwartsencriptado;
 }
