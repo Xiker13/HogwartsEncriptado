@@ -14,11 +14,17 @@ public class App extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("MainView.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 800, 600);
+        Scene scene = new Scene(fxmlLoader.load(), 900, 750);
         stage.setTitle("Cifrado AES");
         stage.setScene(scene);
+
+        // Tamaños mínimos para evitar que se aplaste
+        stage.setMinWidth(900);
+        stage.setMinHeight(780);
+
         stage.show();
     }
+
 
     public static void main(String[] args) {
         launch();
