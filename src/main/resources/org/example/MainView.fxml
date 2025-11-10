@@ -57,19 +57,19 @@
             </Menu>
         </menus>
     </MenuBar>
+
     <VBox spacing="5" GridPane.columnSpan="3" GridPane.rowIndex="1">
-   
-       <!-- Clave -->
-       <Label text="Clave:" />
+        <!-- Clave -->
+        <Label text="Clave:" />
         <TextField fx:id="claveTextField" promptText="Escribe la clave aquí" />
-        <Button fx:id="cargarClaveButton" maxWidth="Infinity" text="Cargar archivo" />
+        <Button fx:id="cargarClaveButton" onAction="#cargarClave" maxWidth="Infinity" text="Cargar archivo" />
     </VBox>
 
     <!-- Área de entrada -->
     <VBox spacing="5" GridPane.rowIndex="2">
         <Label text="Entrada (texto o archivo)" />
         <TextArea fx:id="entradaTextArea" wrapText="true" VBox.vgrow="ALWAYS" />
-        <Button fx:id="cargarEntradaButton" maxWidth="Infinity" text="Cargar archivo" />
+        <Button fx:id="cargarEntradaButton" onAction="#cargarEntrada" maxWidth="Infinity" text="Cargar archivo" />
     </VBox>
 
     <!-- Botones Cifrar/Descifrar -->
@@ -81,10 +81,11 @@
         <TextArea fx:id="resultadoTextArea" editable="false" wrapText="true" VBox.vgrow="ALWAYS" />
         <HBox spacing="5">
             <TextField fx:id="rutaGuardarTextField" promptText="Ruta del archivo..." HBox.hgrow="ALWAYS" />
-            <Button fx:id="guardarArchivoButton" text="Guardar archivo" />
+            <Button fx:id="guardarArchivoButton" onAction="#guardarArchivo" text="Guardar archivo" />
         </HBox>
     </VBox>
-     <Button fx:id="cifrarButton" maxWidth="Infinity" text="Cifrar" GridPane.rowIndex="3" />
-     <Button fx:id="descifrarButton" maxWidth="Infinity" text="Descifrar" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+
+    <Button fx:id="cifrarButton" onAction="#cifrar" maxWidth="Infinity" text="Cifrar" GridPane.rowIndex="3" />
+    <Button fx:id="descifrarButton" onAction="#descifrar" maxWidth="Infinity" text="Descifrar" GridPane.columnIndex="1" GridPane.rowIndex="3" />
 
 </GridPane>
