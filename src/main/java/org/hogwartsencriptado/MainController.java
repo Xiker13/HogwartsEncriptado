@@ -8,6 +8,7 @@ import javafx.stage.Stage;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
+
 /**
  * Controlador principal para la aplicación de cifrado.
  * Gestiona las interacciones del usuario, incluyendo carga de archivos,
@@ -56,6 +57,10 @@ public class MainController {
     private ToggleGroup algoritmoToggleGroup;
 
     private Stage stage;
+
+    // === SERVICIO QUE LLAMA A PYTHON (Vigenère real) ===
+    private final PythonVigenereService vigenereService =
+            new PythonVigenereService("src/main/python/vigenere.py");
 
     /**
      * Método de inicialización que se llama automáticamente después de que se carga el FXML
@@ -132,7 +137,14 @@ public class MainController {
                 AESCipher aes = new AESCipher(clave);
                 textoCifrado = aes.encrypt(texto);
             } else {
-                textoCifrado = generateVigenerePlaceholderEncrypt(texto, clave);
+                // --- Vigenère real vía Python (usando tu servicio) ---
+                PythonVigenereService.PythonResult r =
+                        vigenereService.procesarTexto("cifrar", texto, clave);
+                textoCifrado = r.stdout;
+
+                if (r.stderr != null && !r.stderr.isBlank()) {
+                    mostrarAlerta("Aviso", r.stderr);
+                }
             }
 
             resultadoTextArea.setText(textoCifrado);
@@ -163,7 +175,14 @@ public class MainController {
                 AESCipher aes = new AESCipher(clave);
                 textoDescifrado = aes.decrypt(texto);
             } else {
-                textoDescifrado = generateVigenerePlaceholderDecrypt(texto, clave);
+                // --- Vigenère real vía Python (usando tu servicio) ---
+                PythonVigenereService.PythonResult r =
+                        vigenereService.procesarTexto("descifrar", texto, clave);
+                textoDescifrado = r.stdout;
+
+                if (r.stderr != null && !r.stderr.isBlank()) {
+                    mostrarAlerta("Aviso", r.stderr);
+                }
             }
 
             resultadoTextArea.setText(textoDescifrado);
@@ -204,7 +223,7 @@ public class MainController {
         }
     }
 
-    // === PLACEHOLDERS PARA VIGENÈRE (temporal) ===
+    // === PLACEHOLDERS PARA VIGENÈRE (temporal) @author Salca ===
     private String generateVigenerePlaceholderEncrypt(String texto, String clave) {
         String preview = texto.length() > 40 ? texto.substring(0, 40) + "..." : texto;
         String simulated = new StringBuilder(preview).reverse().toString();
