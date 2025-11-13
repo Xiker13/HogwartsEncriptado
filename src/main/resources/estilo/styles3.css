@@ -1,5 +1,5 @@
 /* ------------------------ */
-/* TEMA SALA COMÚN NOCTURNA */
+/* 🌙 TEMA SALA COMÚN NOCTURNA */
 /* ------------------------ */
 .root {
     -fx-background-color: #0f1f0f;
@@ -7,6 +7,9 @@
     -fx-font-family: "Segoe UI", "Arial", sans-serif;
 }
 
+/* ------------------------ */
+/* 🪶 CONTENEDOR PRINCIPAL */
+/* ------------------------ */
 #rootPane {
     -fx-background-radius: 12;
     -fx-border-radius: 12;
@@ -17,6 +20,9 @@
     -fx-effect: dropshadow(three-pass-box, rgba(44, 85, 48, 0.4), 12, 0, 0, 0);
 }
 
+/* ------------------------ */
+/* ✨ BOTONES */
+/* ------------------------ */
 .button {
     -fx-font-size: 13px;
     -fx-font-weight: 600;
@@ -30,19 +36,28 @@
     -fx-cursor: hand;
     -fx-border-color: #2c5530;
     -fx-border-width: 1;
+    -fx-effect: dropshadow(three-pass-box, rgba(76, 175, 80, 0.25), 5, 0, 0, 2);
 }
 
 .button:hover {
     -fx-background-color: #5a8c69;
-    -fx-effect: innershadow(three-pass-box, rgba(76, 175, 80, 0.3), 5, 0, 0, 2);
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
 }
 
+/* ------------------------ */
+/* 🪶 ETIQUETAS */
+/* ------------------------ */
 .label {
     -fx-font-weight: 600;
     -fx-text-fill: #a5d6a7;
 }
 
-.text-area {
+/* ------------------------ */
+/* 📝 CAMPOS DE TEXTO Y ÁREAS */
+/* ------------------------ */
+.text-area,
+.text-field {
     -fx-border-radius: 6px;
     -fx-background-radius: 6px;
     -fx-border-color: #4a7c59;
@@ -57,15 +72,12 @@
 }
 
 .text-field {
-    -fx-border-radius: 6px;
-    -fx-background-radius: 6px;
-    -fx-border-color: #4a7c59;
-    -fx-border-width: 1px;
-    -fx-background-color: #2e3d2e;
-    -fx-text-fill: #c8e6c9;
     -fx-prompt-text-fill: #81c784;
 }
 
+/* ------------------------ */
+/* ⚙️ RADIO BUTTONS */
+/* ------------------------ */
 .radio-button {
     -fx-font-weight: normal;
     -fx-text-fill: #a5d6a7;
@@ -76,6 +88,9 @@
     -fx-background-color: #2e3d2e;
 }
 
+/* ------------------------ */
+/* 📚 MENÚS */
+/* ------------------------ */
 .menu-bar {
     -fx-background-color: #1a2f1a;
     -fx-padding: 0;

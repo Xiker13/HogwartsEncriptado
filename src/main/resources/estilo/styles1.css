@@ -1,5 +1,5 @@
 /* ------------------------ */
-/* TEMA HOGWARTS MÁGICO */
+/* 🌟 TEMA HOGWARTS MÁGICO */
 /* ------------------------ */
 .root {
     -fx-background-color: #1a1025;
@@ -7,6 +7,9 @@
     -fx-font-family: "Segoe UI", "Arial", sans-serif;
 }
 
+/* ------------------------ */
+/* 🌌 CONTENEDOR PRINCIPAL */
+/* ------------------------ */
 #rootPane {
     -fx-background-radius: 12;
     -fx-border-radius: 12;
@@ -17,6 +20,9 @@
     -fx-effect: dropshadow(three-pass-box, rgba(93, 78, 117, 0.4), 15, 0, 0, 0);
 }
 
+/* ------------------------ */
+/* 🔮 BOTONES */
+/* ------------------------ */
 .button {
     -fx-font-size: 13px;
     -fx-font-weight: 600;
@@ -37,13 +43,20 @@
     -fx-scale-y: 1.02;
 }
 
+/* ------------------------ */
+/* 🪄 ETIQUETAS */
+/* ------------------------ */
 .label {
     -fx-font-weight: 600;
     -fx-text-fill: #d4c4e8;
-    -fx-effect: dropshadow(one-pass-box, rgba(0,0,0,0.3), 2, 0, 1, 1);
+    -fx-effect: dropshadow(one-pass-box, rgba(0, 0, 0, 0.3), 2, 0, 1, 1);
 }
 
-.text-area {
+/* ------------------------ */
+/* 📜 CAMPOS DE TEXTO Y ÁREAS */
+/* ------------------------ */
+.text-area,
+.text-field {
     -fx-border-radius: 6px;
     -fx-background-radius: 6px;
     -fx-border-color: #6d5c85;
@@ -58,15 +71,12 @@
 }
 
 .text-field {
-    -fx-border-radius: 6px;
-    -fx-background-radius: 6px;
-    -fx-border-color: #6d5c85;
-    -fx-border-width: 1px;
-    -fx-background-color: #3a2d4d;
-    -fx-text-fill: #e0d6f0;
     -fx-prompt-text-fill: #8b7aa3;
 }
 
+/* ------------------------ */
+/* ⚙️ RADIO BUTTONS */
+/* ------------------------ */
 .radio-button {
     -fx-font-weight: normal;
     -fx-text-fill: #d4c4e8;
@@ -77,6 +87,9 @@
     -fx-background-color: #3a2d4d;
 }
 
+/* ------------------------ */
+/* 📚 MENÚS */
+/* ------------------------ */
 .menu-bar {
     -fx-background-color: #2a1b3d;
     -fx-padding: 0;

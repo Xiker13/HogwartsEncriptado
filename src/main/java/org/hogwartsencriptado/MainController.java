@@ -1,101 +1,91 @@
 package org.hogwartsencriptado;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.*;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
-
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 /**
- * Controlador principal para la aplicación de cifrado.
- * Gestiona las interacciones del usuario, incluyendo carga de archivos,
- * operaciones de cifrado/descifrado y guardado del resultado.
- * Soporta AES y, temporalmente, devuelve un placeholder para Vigenère
- * hasta que se implemente la clase correspondiente.
+ * Controlador principal de Hogwarts Encriptado.
+ * Gestiona la interfaz, cifrado/descifrado, idioma y menús.
  */
 public class MainController {
 
     // === ELEMENTOS DE LA INTERFAZ ===
-    @FXML
-    private TextField claveTextField;
+    @FXML private TextField claveTextField;
+    @FXML private Button cargarClaveButton;
+    @FXML private TextArea entradaTextArea;
+    @FXML private Button cargarEntradaButton;
+    @FXML private Button cifrarButton;
+    @FXML private Button descifrarButton;
+    @FXML private TextArea resultadoTextArea;
+    @FXML private TextField nombreArchivoTextField;
+    @FXML private Button guardarArchivoButton;
+    @FXML private RadioButton aesRadioButton;
+    @FXML private RadioButton vigenereRadioButton;
 
-    @FXML
-    private Button cargarClaveButton;
+    // === MENÚS ===
+    @FXML private MenuItem closeMenuItem;
+    @FXML private MenuItem manualMenuItem;
+    @FXML private MenuItem ayudaMenuItem;
+    @FXML private MenuItem aboutMenuItem;
 
-    @FXML
-    private TextArea entradaTextArea;
+    // === MENÚ DE IDIOMA ===
+    @FXML private Menu menuIdioma;
+    @FXML private MenuItem esMenuItem;
+    @FXML private MenuItem enMenuItem;
 
-    @FXML
-    private Button cargarEntradaButton;
-
-    @FXML
-    private Button cifrarButton;
-
-    @FXML
-    private Button descifrarButton;
-
-    @FXML
-    private TextArea resultadoTextArea;
-
-    @FXML
-    private TextField rutaGuardarTextField;
-
-    @FXML
-    private Button guardarArchivoButton;
-
-    // === RADIOBUTTONS ===
-    @FXML
-    private RadioButton aesRadioButton;
-
-    @FXML
-    private RadioButton vigenereRadioButton;
-
-    // === TOGGLEGROUP (se crea programáticamente) ===
     private ToggleGroup algoritmoToggleGroup;
-
     private Stage stage;
+    private App app;
 
-    // === SERVICIO QUE LLAMA A PYTHON (Vigenère real) ===
-    private final PythonVigenereService vigenereService =
-            new PythonVigenereService("src/main/python/vigenere.py");
+    private ResourceBundle bundle;
 
-    /**
-     * Método de inicialización que se llama automáticamente después de que se carga el FXML
-     * Aquí configuramos el ToggleGroup para los RadioButtons
-     */
+    // Servicio Vigenère
+    private final PythonVigenereService vigenereService = new PythonVigenereService("src/main/python/vigenere.py");
+
     @FXML
     private void initialize() {
-        // Inicializar el ToggleGroup y asignarlo a los RadioButtons
         algoritmoToggleGroup = new ToggleGroup();
         aesRadioButton.setToggleGroup(algoritmoToggleGroup);
         vigenereRadioButton.setToggleGroup(algoritmoToggleGroup);
-
-        // Seleccionar AES por defecto
         aesRadioButton.setSelected(true);
+
+        bundle = ResourceBundle.getBundle("i18n.messages", Locale.getDefault());
+
+        if (closeMenuItem != null) closeMenuItem.setOnAction(e -> cerrarAplicacion());
+        if (manualMenuItem != null) manualMenuItem.setOnAction(e -> abrirManual());
+        if (ayudaMenuItem != null) ayudaMenuItem.setOnAction(e -> mostrarAyuda());
+        if (aboutMenuItem != null) aboutMenuItem.setOnAction(e -> mostrarAcercaDe());
+
+        if (esMenuItem != null) esMenuItem.setOnAction(e -> cambiarIdioma("es"));
+        if (enMenuItem != null) enMenuItem.setOnAction(e -> cambiarIdioma("en"));
     }
 
-    /** Establece el stage principal (usado para los diálogos de archivos) */
-    public void setStage(Stage stage) {
-        this.stage = stage;
-    }
+    public void setStage(Stage stage) { this.stage = stage; }
 
-    // === ACCIONES ===
+    public void setApp(App app) { this.app = app; }
+
+    public void setBundle(ResourceBundle bundle) { this.bundle = bundle; }
 
     @FXML
     private void cargarClave() {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Seleccionar archivo de clave");
+        fileChooser.setTitle(bundle.getString("file.choose.key"));
         File archivo = fileChooser.showOpenDialog(stage);
-
         if (archivo != null) {
             try (BufferedReader br = new BufferedReader(new FileReader(archivo, StandardCharsets.UTF_8))) {
-                String clave = br.readLine();
-                claveTextField.setText(clave);
+                claveTextField.setText(br.readLine());
             } catch (IOException e) {
-                mostrarAlerta("Error al leer el archivo de clave", e.getMessage());
+                mostrarAlerta(bundle.getString("error.title"), e.getMessage());
             }
         }
     }
@@ -103,15 +93,13 @@ public class MainController {
     @FXML
     private void cargarEntrada() {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Seleccionar archivo de entrada");
+        fileChooser.setTitle(bundle.getString("file.choose.input"));
         File archivo = fileChooser.showOpenDialog(stage);
-
         if (archivo != null) {
             try {
-                String contenido = new String(java.nio.file.Files.readAllBytes(archivo.toPath()), StandardCharsets.UTF_8);
-                entradaTextArea.setText(contenido);
+                entradaTextArea.setText(new String(java.nio.file.Files.readAllBytes(archivo.toPath()), StandardCharsets.UTF_8));
             } catch (IOException e) {
-                mostrarAlerta("Error al leer el archivo de entrada", e.getMessage());
+                mostrarAlerta(bundle.getString("error.title"), e.getMessage());
             }
         }
     }
@@ -122,35 +110,28 @@ public class MainController {
         String texto = entradaTextArea.getText();
 
         if (clave == null || clave.isEmpty()) {
-            mostrarAlerta("Clave requerida", "Debes ingresar una clave antes de cifrar.");
+            mostrarAlerta(bundle.getString("error.keyRequiredTitle"), bundle.getString("error.keyRequired"));
             return;
         }
         if (texto == null || texto.isEmpty()) {
-            mostrarAlerta("Texto vacío", "Debes ingresar texto o cargar un archivo para cifrar.");
+            mostrarAlerta(bundle.getString("error.textEmptyTitle"), bundle.getString("error.textEmpty"));
             return;
         }
 
         try {
             String textoCifrado;
-
             if (aesRadioButton.isSelected()) {
                 AESCipher aes = new AESCipher(clave);
                 textoCifrado = aes.encrypt(texto);
             } else {
-                // --- Vigenère real vía Python (usando tu servicio) ---
-                PythonVigenereService.PythonResult r =
-                        vigenereService.procesarTexto("cifrar", texto, clave);
+                PythonVigenereService.PythonResult r = vigenereService.procesarTexto("cifrar", texto, clave);
                 textoCifrado = r.stdout;
-
-                if (r.stderr != null && !r.stderr.isBlank()) {
-                    mostrarAlerta("Aviso", r.stderr);
-                }
+                if (r.stderr != null && !r.stderr.isBlank())
+                    mostrarAlerta(bundle.getString("warning.title"), r.stderr);
             }
-
             resultadoTextArea.setText(textoCifrado);
-
         } catch (Exception e) {
-            mostrarAlerta("Error al cifrar", e.getMessage());
+            mostrarAlerta(bundle.getString("error.encryptTitle"), e.getMessage());
         }
     }
 
@@ -160,87 +141,97 @@ public class MainController {
         String texto = entradaTextArea.getText();
 
         if (clave == null || clave.isEmpty()) {
-            mostrarAlerta("Clave requerida", "Debes ingresar una clave antes de descifrar.");
+            mostrarAlerta(bundle.getString("error.keyRequiredTitle"), bundle.getString("error.keyRequired"));
             return;
         }
         if (texto == null || texto.isEmpty()) {
-            mostrarAlerta("Texto vacío", "Debes ingresar texto cifrado o cargar un archivo para descifrar.");
+            mostrarAlerta(bundle.getString("error.textEmptyTitle"), bundle.getString("error.textEmpty"));
             return;
         }
 
         try {
             String textoDescifrado;
-
             if (aesRadioButton.isSelected()) {
                 AESCipher aes = new AESCipher(clave);
                 textoDescifrado = aes.decrypt(texto);
             } else {
-                // --- Vigenère real vía Python (usando tu servicio) ---
-                PythonVigenereService.PythonResult r =
-                        vigenereService.procesarTexto("descifrar", texto, clave);
+                PythonVigenereService.PythonResult r = vigenereService.procesarTexto("descifrar", texto, clave);
                 textoDescifrado = r.stdout;
-
-                if (r.stderr != null && !r.stderr.isBlank()) {
-                    mostrarAlerta("Aviso", r.stderr);
-                }
+                if (r.stderr != null && !r.stderr.isBlank())
+                    mostrarAlerta(bundle.getString("warning.title"), r.stderr);
             }
-
             resultadoTextArea.setText(textoDescifrado);
-
         } catch (Exception e) {
-            mostrarAlerta("Error al descifrar", e.getMessage());
+            mostrarAlerta(bundle.getString("error.decryptTitle"), e.getMessage());
         }
     }
 
     @FXML
     private void guardarArchivo() {
-        String ruta = rutaGuardarTextField.getText();
         String contenido = resultadoTextArea.getText();
-
         if (contenido == null || contenido.isEmpty()) {
-            mostrarAlerta("Nada que guardar", "El área de resultado está vacía.");
+            mostrarAlerta(bundle.getString("warning.title"), bundle.getString("error.nothingToSave"));
             return;
         }
 
-        try {
-            File archivo;
-            if (ruta == null || ruta.isEmpty()) {
-                FileChooser fileChooser = new FileChooser();
-                fileChooser.setTitle("Guardar archivo de resultado");
-                archivo = fileChooser.showSaveDialog(stage);
-            } else {
-                archivo = new File(ruta);
-            }
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle(bundle.getString("file.save.result"));
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter(bundle.getString("file.filter.text"), "*.txt"));
 
-            if (archivo != null) {
-                try (BufferedWriter bw = new BufferedWriter(new FileWriter(archivo, StandardCharsets.UTF_8))) {
-                    bw.write(contenido);
-                }
-            }
+        String nombre = nombreArchivoTextField.getText();
+        if (nombre != null && !nombre.isBlank()) {
+            if (!nombre.toLowerCase().endsWith(".txt")) nombre += ".txt";
+            fileChooser.setInitialFileName(nombre);
+        }
 
-        } catch (IOException e) {
-            mostrarAlerta("Error al guardar archivo", e.getMessage());
+        File archivo = fileChooser.showSaveDialog(stage);
+        if (archivo != null) {
+            try (BufferedWriter bw = new BufferedWriter(new FileWriter(archivo, StandardCharsets.UTF_8))) {
+                bw.write(contenido);
+            } catch (IOException e) {
+                mostrarAlerta(bundle.getString("error.title"), e.getMessage());
+            }
         }
     }
 
-    // === PLACEHOLDERS PARA VIGENÈRE (temporal) @author Salca ===
-    private String generateVigenerePlaceholderEncrypt(String texto, String clave) {
-        String preview = texto.length() > 40 ? texto.substring(0, 40) + "..." : texto;
-        String simulated = new StringBuilder(preview).reverse().toString();
-        return "[VIGENÈRE - placeholder de cifrado]\n\nClave usada: " + summarize(clave) + "\n\nSimulación (preview invertida):\n" + simulated;
+    private void cerrarAplicacion() {
+        if (stage != null) stage.close();
     }
 
-    private String generateVigenerePlaceholderDecrypt(String texto, String clave) {
-        String preview = texto.length() > 40 ? texto.substring(0, 40) + "..." : texto;
-        String simulated = new StringBuilder(preview).reverse().toString();
-        return "[VIGENÈRE - placeholder de descifrado]\n\nClave usada: " + summarize(clave) + "\n\nSimulación (preview invertida):\n" + simulated;
+    private void abrirManual() {
+        if (app != null) {
+            try {
+                // Usar el bundle actual que refleja el idioma seleccionado
+                String manualPath = bundle.getString("manual.url");
+                URL manualURL = getClass().getResource(manualPath);
+
+                if (manualURL != null) {
+                    app.getHostServices().showDocument(manualURL.toExternalForm());
+                } else {
+                    mostrarAlerta(bundle.getString("error.title"),
+                            bundle.getString("error.manualNotFound") + ": " + manualPath);
+                }
+            } catch (Exception e) {
+                mostrarAlerta(bundle.getString("error.title"),
+                        bundle.getString("error.manualOpenFail") + "\n" + e.getMessage());
+            }
+        }
     }
 
-    private String summarize(String s) {
-        if (s == null) return "<vacía>";
-        s = s.trim();
-        if (s.length() <= 8) return s;
-        return s.substring(0, 4) + "..." + s.substring(s.length() - 4);
+    private void mostrarAyuda() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(bundle.getString("help.title"));
+        alert.setHeaderText(bundle.getString("help.header"));
+        alert.setContentText(bundle.getString("help.content"));
+        alert.showAndWait();
+    }
+
+    private void mostrarAcercaDe() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(bundle.getString("about.title"));
+        alert.setHeaderText(bundle.getString("about.header"));
+        alert.setContentText(bundle.getString("about.content"));
+        alert.showAndWait();
     }
 
     private void mostrarAlerta(String titulo, String mensaje) {
@@ -249,5 +240,26 @@ public class MainController {
         alert.setHeaderText(null);
         alert.setContentText(mensaje);
         alert.showAndWait();
+    }
+
+    private void cambiarIdioma(String idioma) {
+        try {
+            Locale locale = new Locale(idioma);
+            ResourceBundle bundleNuevo = ResourceBundle.getBundle("i18n.messages", locale);
+
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/MainView.fxml"), bundleNuevo);
+            Scene scene = new Scene(fxmlLoader.load(), stage.getWidth(), stage.getHeight());
+
+            MainController controller = fxmlLoader.getController();
+            controller.setStage(stage);
+            controller.setApp(app);
+            controller.setBundle(bundleNuevo); // actualizar bundle
+
+            stage.setScene(scene);
+            stage.setTitle(bundleNuevo.getString("app.title"));
+        } catch (Exception e) {
+            mostrarAlerta(bundle.getString("error.title"),
+                    bundle.getString("error.changeLangFail") + "\n" + e.getMessage());
+        }
     }
 }
