@@ -1,5 +1,8 @@
 package org.hogwartsencriptado;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
@@ -16,7 +19,13 @@ import java.util.Base64;
  */
 public class AESCipher {
 
+    /** Logger de la clase para registrar operaciones y errores */
+    private static final Logger log = LoggerFactory.getLogger(AESCipher.class);
+
+    /** Nombre del algoritmo de cifrado */
     private static final String ALGORITHM = "AES";
+
+    /** Clave secreta generada a partir del texto del usuario */
     private final SecretKeySpec secretKey;
 
     /**
@@ -28,7 +37,9 @@ public class AESCipher {
      * @param key Clave proporcionada por el usuario
      */
     public AESCipher(String key) {
+        log.debug("Inicializando AESCipher con clave proporcionada (longitud={} caracteres).", key.length());
         this.secretKey = generateKey(key);
+        log.info("Clave AES generada correctamente (algoritmo={}).", ALGORITHM);
     }
 
     /**
@@ -39,10 +50,18 @@ public class AESCipher {
      * @throws Exception Si ocurre un error durante el cifrado
      */
     public String encrypt(String plainText) throws Exception {
-        Cipher cipher = Cipher.getInstance(ALGORITHM);
-        cipher.init(Cipher.ENCRYPT_MODE, secretKey);
-        byte[] encryptedBytes = cipher.doFinal(plainText.getBytes(StandardCharsets.UTF_8));
-        return Base64.getEncoder().encodeToString(encryptedBytes);
+        log.info("Iniciando cifrado AES...");
+        try {
+            Cipher cipher = Cipher.getInstance(ALGORITHM);
+            cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+            byte[] encryptedBytes = cipher.doFinal(plainText.getBytes(StandardCharsets.UTF_8));
+            String resultado = Base64.getEncoder().encodeToString(encryptedBytes);
+            log.debug("Cifrado completado (longitud salida={} caracteres).", resultado.length());
+            return resultado;
+        } catch (Exception e) {
+            log.error("Error durante el proceso de cifrado AES: {}", e.toString());
+            throw e;
+        }
     }
 
     /**
@@ -53,10 +72,18 @@ public class AESCipher {
      * @throws Exception Si ocurre un error durante el descifrado
      */
     public String decrypt(String cipherText) throws Exception {
-        Cipher cipher = Cipher.getInstance(ALGORITHM);
-        cipher.init(Cipher.DECRYPT_MODE, secretKey);
-        byte[] decodedBytes = Base64.getDecoder().decode(cipherText);
-        return new String(cipher.doFinal(decodedBytes), StandardCharsets.UTF_8);
+        log.info("Iniciando descifrado AES...");
+        try {
+            Cipher cipher = Cipher.getInstance(ALGORITHM);
+            cipher.init(Cipher.DECRYPT_MODE, secretKey);
+            byte[] decodedBytes = Base64.getDecoder().decode(cipherText);
+            String resultado = new String(cipher.doFinal(decodedBytes), StandardCharsets.UTF_8);
+            log.debug("Descifrado completado (longitud salida={} caracteres).", resultado.length());
+            return resultado;
+        } catch (Exception e) {
+            log.error("Error durante el proceso de descifrado AES: {}", e.toString());
+            throw e;
+        }
     }
 
     /**
@@ -66,13 +93,16 @@ public class AESCipher {
      * @return SecretKey lista para usar en cifrado AES
      */
     private SecretKeySpec generateKey(String key) {
+        log.trace("Generando clave AES a partir del texto de usuario...");
         try {
             byte[] keyBytes = key.getBytes(StandardCharsets.UTF_8);
             MessageDigest sha = MessageDigest.getInstance("SHA-256");
             keyBytes = sha.digest(keyBytes);
             keyBytes = Arrays.copyOf(keyBytes, 16); // AES-128
+            log.debug("Clave derivada con SHA-256 truncada a 128 bits.");
             return new SecretKeySpec(keyBytes, ALGORITHM);
         } catch (Exception e) {
+            log.error("Error al generar la clave AES: {}", e.toString());
             throw new RuntimeException("Error al generar la clave AES", e);
         }
     }

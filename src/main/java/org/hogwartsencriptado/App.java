@@ -1,5 +1,8 @@
 package org.hogwartsencriptado;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -13,8 +16,11 @@ import java.util.ResourceBundle;
 /**
  * Clase principal de la aplicación Hogwarts Encriptado.
  * <p>
- * Carga la interfaz definida en {@code MainView.fxml} y muestra la ventana principal.
- * Soporta internacionalización mediante archivos de propiedades en la carpeta {@code i18n}.
+ * Se encarga de inicializar JavaFX, cargar la interfaz principal definida en {@code MainView.fxml}
+ * y configurar los recursos de internacionalización (i18n) según el idioma.
+ * </p>
+ * <p>
+ * También inicializa el controlador principal y establece el icono, título y tamaño de la ventana.
  * </p>
  * <p>
  * Autor: Xiker
@@ -22,11 +28,13 @@ import java.util.ResourceBundle;
  */
 public class App extends Application {
 
+    /** Logger de la clase (usado para registrar eventos de inicio y errores) */
+    private static final Logger log = LoggerFactory.getLogger(App.class);
+
     /**
-     * Metodo de inicio de la aplicación JavaFX.
+     * Método principal de inicio de la aplicación JavaFX.
      * <p>
-     * Configura el {@code Stage} principal, carga el FXML con soporte de traducción,
-     * inicializa el controlador y establece el icono de la aplicación.
+     * Carga el archivo FXML, asigna el controlador, configura idioma, icono y ventana principal.
      * </p>
      *
      * @param stage Stage principal de JavaFX
@@ -34,44 +42,66 @@ public class App extends Application {
      */
     @Override
     public void start(Stage stage) throws Exception {
-        // Selección de idioma por defecto (Español)
-        Locale locale = new Locale("es");
-        ResourceBundle bundle = ResourceBundle.getBundle("i18n.messages", locale);
+        log.info("Iniciando aplicación Hogwarts Encriptado...");
 
-        // Cargar FXML con ResourceBundle
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/MainView.fxml"), bundle);
-        Parent root = fxmlLoader.load();
+        try {
+            // Selección de idioma por defecto (Español)
+            Locale locale = new Locale("es");
+            ResourceBundle bundle = ResourceBundle.getBundle("i18n.messages", locale);
+            log.debug("Idioma por defecto establecido: {}", locale.getLanguage());
 
-        // Obtener controlador y pasarle el Stage
-        MainController controller = fxmlLoader.getController();
-        controller.setStage(stage);
-        controller.setApp(this);
+            // Cargar el FXML junto con el ResourceBundle (traducciones)
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/MainView.fxml"), bundle);
+            Parent root = fxmlLoader.load();
+            log.info("Archivo FXML principal cargado correctamente.");
 
-        // Cargar icono de la aplicación
-        Image icon = new Image(getClass().getResource("/imagenes/hogwarts_escudo.png").toExternalForm());
-        stage.getIcons().add(icon);
+            // Obtener el controlador y pasarle el Stage y la App
+            MainController controller = fxmlLoader.getController();
+            controller.setStage(stage);
+            controller.setApp(this);
+            log.debug("Controlador principal inicializado y vinculado al Stage.");
 
-        // Configurar título de la ventana
-        stage.setTitle(bundle.getString("app.title"));
+            // Cargar icono de la aplicación
+            Image icon = new Image(getClass().getResource("/imagenes/hogwarts_escudo.png").toExternalForm());
+            stage.getIcons().add(icon);
+            log.debug("Icono de la aplicación establecido correctamente.");
 
-        // Crear escena
-        Scene scene = new Scene(root, 900, 580);
-        stage.setScene(scene);
+            // Configurar título de la ventana
+            stage.setTitle(bundle.getString("app.title"));
+            log.info("Título de la ventana configurado: {}", bundle.getString("app.title"));
 
-        // Tamaños mínimos
-        stage.setMinWidth(800);
-        stage.setMinHeight(580);
+            // Crear la escena y asignarla al Stage
+            Scene scene = new Scene(root, 900, 580);
+            stage.setScene(scene);
+            log.debug("Escena principal creada (900x580).");
 
-        // Mostrar ventana
-        stage.show();
+            // Tamaños mínimos de la ventana
+            stage.setMinWidth(800);
+            stage.setMinHeight(580);
+            log.trace("Tamaños mínimos definidos: 800x580.");
+
+            // Mostrar ventana principal
+            stage.show();
+            log.info("Ventana principal mostrada correctamente.");
+
+        } catch (Exception e) {
+            // Captura general de errores en la inicialización
+            log.error("Error al iniciar la aplicación: {}", e.toString(), e);
+            throw e; // Se relanza para que JavaFX gestione el fallo
+        }
     }
 
     /**
-     * Metodo principal de la aplicación.
+     * Método main de la aplicación.
+     * <p>
+     * Lanza el entorno JavaFX y delega en el método {@link #start(Stage)}.
+     * </p>
      *
      * @param args argumentos de línea de comandos
      */
     public static void main(String[] args) {
-        launch();
+        log.info("Ejecutando método main(): lanzamiento de JavaFX.");
+        launch();  // Llama internamente a start(Stage)
     }
 }
+
