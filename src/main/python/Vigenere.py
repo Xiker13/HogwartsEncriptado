@@ -19,7 +19,7 @@ Características principales:
 - Muestra mensajes claros de error o advertencia
 - No almacena claves en disco
 - Puede ser invocado desde la app Java (modo consola)
-@author salca
+@author Salca
 """
 
 # ========================= LIBRERÍAS =========================
@@ -105,22 +105,19 @@ def detectar_invisibles(cadena: str) -> List[str]:
 
 def normalizar_clave(clave: str) -> str:
     """
-    Normaliza la clave eliminando todos los caracteres que no sean letras A-Z.
+    Normaliza la clave eliminando todos los caracteres que no sean letras A-Z,
+    incluyendo espacios, tabulaciones y saltos de línea.
 
-    El cifrado de Vigenère clásico opera únicamente sobre letras del alfabeto
-    inglés. Este método convierte la clave a mayúsculas y descarta cualquier
-    carácter no alfabético (números, tildes, signos, espacios...).
+    Args:
+        clave (str): Clave original.
 
-    Parámetros
-    ----------
-    clave : str
-        Clave introducida por el usuario.
-
-    Retorna
-    -------
-    str
-        Clave limpia compuesta solo por letras mayúsculas A-Z.
+    Returns:
+        str: Clave limpia compuesta solo por letras mayúsculas A-Z.
     """
+    # Eliminar caracteres invisibles explícitamente
+    for c in CARACTERES_INVISIBLES + ['\n', '\r', '\t', ' ']:
+        clave = clave.replace(c, '')
+    # Convertir a mayúsculas y conservar solo A-Z
     return "".join(c for c in clave.upper() if c in string.ascii_uppercase)
 
 

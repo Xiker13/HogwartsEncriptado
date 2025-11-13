@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox id="rootPane" minHeight="580.0" minWidth="800.0" prefHeight="580.0" prefWidth="900.0" spacing="10" stylesheets="@../estilo/styles.css" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.hogwartsencriptado.MainController">
+<VBox id="rootPane" minHeight="600.0" minWidth="800.0" prefHeight="600.0" prefWidth="900.0" spacing="10" stylesheets="@../estilo/styles.css" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.hogwartsencriptado.MainController">
 
     <!-- Menú superior -->
     <MenuBar minHeight="25" prefHeight="30" styleClass="menu-bar">
@@ -56,7 +56,7 @@
     <!-- Clave -->
     <VBox spacing="5">
         <Label minHeight="20" text="%label.key" />
-        <TextField fx:id="claveTextField" minHeight="30" promptText="%textfield.key" />
+        <TextArea fx:id="claveTextField" minHeight="35.0" prefHeight="59.0" prefWidth="874.0" promptText="%textfield.key" wrapText="true" VBox.vgrow="NEVER" />
         <Button fx:id="cargarClaveButton" maxWidth="Infinity" minHeight="35" onAction="#cargarClave" text="%button.loadKey" />
         <VBox.margin>
             <Insets left="10.0" right="10.0" />
@@ -78,7 +78,7 @@
             <TextArea fx:id="resultadoTextArea" editable="false" minHeight="200.0" minWidth="200" wrapText="true" VBox.vgrow="ALWAYS" />
 
             <HBox spacing="5">
-                <TextField fx:id="nombreArchivoTextField" alignment="CENTER" minHeight="35.0" promptText="%textfield.filename" HBox.hgrow="ALWAYS" />
+                <TextField fx:id="nombreArchivoTextField" minHeight="35.0" promptText="%textfield.filename" HBox.hgrow="ALWAYS" />
                 <Button fx:id="guardarArchivoButton" minHeight="35" onAction="#guardarArchivo" text="%button.save" />
             </HBox>
         </VBox>
@@ -91,7 +91,7 @@
     </HBox>
 
     <!-- Botones Cifrar / Descifrar -->
-    <VBox spacing="10">
+    <VBox prefWidth="894.0" spacing="10">
         <Button fx:id="cifrarButton" maxWidth="Infinity" minHeight="45" onAction="#cifrar" text="%button.encrypt" />
         <Button fx:id="descifrarButton" maxWidth="Infinity" minHeight="45" onAction="#descifrar" text="%button.decrypt">
             <VBox.margin>

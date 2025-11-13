@@ -16,6 +16,19 @@ import java.util.Base64;
  * Permite trabajar con texto plano y generar resultados codificados en Base64.
  * También puede manejar claves proporcionadas por el usuario.
  * </p>
+ * <p>
+ * La clave proporcionada se convierte internamente en una clave AES de 128 bits mediante SHA-256.
+ * </p>
+ * <p>
+ * Uso típico:
+ * <pre>
+ *     AESCipher aes = new AESCipher("miClaveSecreta");
+ *     String cifrado = aes.encrypt("texto plano");
+ *     String descifrado = aes.decrypt(cifrado);
+ * </pre>
+ * </p>
+ *
+ * @author Xiker
  */
 public class AESCipher {
 
@@ -29,7 +42,7 @@ public class AESCipher {
     private final SecretKeySpec secretKey;
 
     /**
-     * Constructor que genera una clave AES a partir de un String.
+     * Constructor que genera una clave AES a partir de un {@code String}.
      * <p>
      * Si la longitud de la clave es menor a 16 bytes, se rellena automáticamente.
      * </p>
@@ -87,10 +100,11 @@ public class AESCipher {
     }
 
     /**
-     * Genera una clave AES de 128 bits a partir de un String usando SHA-256.
+     * Genera una clave AES de 128 bits a partir de un {@code String} usando SHA-256.
      *
      * @param key Clave proporcionada por el usuario
-     * @return SecretKey lista para usar en cifrado AES
+     * @return SecretKeySpec lista para usar en cifrado AES
+     * @throws RuntimeException Si ocurre un error al generar la clave
      */
     private SecretKeySpec generateKey(String key) {
         log.trace("Generando clave AES a partir del texto de usuario...");

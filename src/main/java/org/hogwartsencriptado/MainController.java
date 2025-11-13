@@ -19,20 +19,33 @@ import java.util.ResourceBundle;
 /**
  * Controlador principal de Hogwarts Encriptado.
  * <p>
- * Gestiona la interfaz de usuario, las acciones de cifrado y descifrado,
- * la carga y guardado de archivos, y el cambio de idioma.
+ * Gestiona la interfaz de usuario, incluyendo:
+ * <ul>
+ *     <li>Carga de claves y textos desde archivos.</li>
+ *     <li>Cifrado y descifrado de texto con AES o Vigenère.</li>
+ *     <li>Guardado de resultados en archivos.</li>
+ *     <li>Menús de ayuda, manual, acerca de y cierre de aplicación.</li>
+ *     <li>Cambio de idioma dinámico mediante recarga de FXML y ResourceBundle.</li>
+ * </ul>
+ * </p>
+ * <p>
+ * Esta versión incluye trazas de logging mediante SLF4J + Logback para registrar
+ * eventos importantes, advertencias y errores, tanto en consola como en ficheros.
+ * </p>
+ * <p>
+ * Está vinculada a {@code MainView.fxml} y utiliza {@link PythonVigenereService}
+ * para el cifrado/descifrado Vigenère en Python.
  * </p>
  *
- * Esta versión incluye trazas de logging usando SLF4J + Logback,
- * lo que permite registrar eventos relevantes en consola y archivos.
+ * @author Xiker, Salca (modifier)
  */
 public class MainController {
 
-    /** Logger de la clase (gestiona trazas informativas, advertencias y errores) */
+    /** Logger de la clase, para registrar eventos y errores */
     private static final Logger log = LoggerFactory.getLogger(MainController.class);
 
-    // === ELEMENTOS DE LA INTERFAZ ===
-    @FXML private TextField claveTextField;
+    // === ELEMENTOS DE LA INTERFAZ (FXML) ===
+    @FXML private TextArea claveTextField; // cambiado a TextArea para soportar multilinea
     @FXML private Button cargarClaveButton;
     @FXML private TextArea entradaTextArea;
     @FXML private Button cargarEntradaButton;
@@ -55,73 +68,93 @@ public class MainController {
     @FXML private MenuItem esMenuItem;
     @FXML private MenuItem enMenuItem;
 
-    /** Agrupador para los botones de algoritmo (AES/Vigenère) */
+    /** Agrupador de RadioButtons de algoritmo (AES/Vigenère) */
     private ToggleGroup algoritmoToggleGroup;
 
-    /** Referencia al Stage principal */
+    /** Ventana principal de la aplicación */
     private Stage stage;
 
-    /** Referencia a la clase App principal */
+    /** Referencia a la clase principal App */
     private App app;
 
-    /** Bundle de idioma actual */
+    /** ResourceBundle actual para internacionalización */
     private ResourceBundle bundle;
 
-    /** Servicio de cifrado/descifrado Vigenère en Python */
+    /** Servicio Python para el cifrado/descifrado Vigenère */
     private final PythonVigenereService vigenereService = new PythonVigenereService("src/main/python/vigenere.py");
 
     /**
-     * Método de inicialización automática de JavaFX.
-     * Se ejecuta al cargar el FXML.
+     * Inicialización automática de JavaFX.
+     * <p>
+     * Se ejecuta al cargar el FXML y realiza:
+     * <ul>
+     *     <li>Configuración del ToggleGroup de algoritmos.</li>
+     *     <li>Asignación de acciones a los menús y cambio de idioma.</li>
+     *     <li>Carga del ResourceBundle por defecto según la localización del sistema.</li>
+     * </ul>
+     * </p>
      */
     @FXML
     private void initialize() {
         log.debug("Inicializando MainController...");
 
-        // Grupo de selección entre AES y Vigenère
         algoritmoToggleGroup = new ToggleGroup();
         aesRadioButton.setToggleGroup(algoritmoToggleGroup);
         vigenereRadioButton.setToggleGroup(algoritmoToggleGroup);
         aesRadioButton.setSelected(true);
 
-        // Carga del idioma por defecto
         bundle = ResourceBundle.getBundle("i18n.messages", Locale.getDefault());
         log.info("Idioma cargado: {} ({} claves)", Locale.getDefault(), bundle.keySet().size());
 
-        // Asignación de acciones a los menús
         if (closeMenuItem != null) closeMenuItem.setOnAction(e -> cerrarAplicacion());
         if (manualMenuItem != null) manualMenuItem.setOnAction(e -> abrirManual());
         if (ayudaMenuItem != null) ayudaMenuItem.setOnAction(e -> mostrarAyuda());
         if (aboutMenuItem != null) aboutMenuItem.setOnAction(e -> mostrarAcercaDe());
 
-        // Asignación de cambio de idioma
         if (esMenuItem != null) esMenuItem.setOnAction(e -> cambiarIdioma("es"));
         if (enMenuItem != null) enMenuItem.setOnAction(e -> cambiarIdioma("en"));
 
         log.debug("MainController inicializado correctamente.");
     }
 
-    /** Asigna el Stage principal */
+    /**
+     * Asigna el Stage principal de la aplicación.
+     *
+     * @param stage Ventana principal {@link Stage}
+     */
     public void setStage(Stage stage) {
         this.stage = stage;
         log.trace("Stage principal asignado.");
     }
 
-    /** Asigna la referencia a la App */
+    /**
+     * Asigna la referencia a la clase principal App.
+     *
+     * @param app Instancia de {@link App}
+     */
     public void setApp(App app) {
         this.app = app;
         log.trace("Referencia a App asignada.");
     }
 
-    /** Actualiza el ResourceBundle de idioma */
+    /**
+     * Actualiza el ResourceBundle usado para internacionalización.
+     *
+     * @param bundle ResourceBundle nuevo
+     */
     public void setBundle(ResourceBundle bundle) {
         this.bundle = bundle;
         log.trace("Bundle actualizado a idioma {}.", bundle.getLocale());
     }
 
     /**
-     * Carga una clave desde un archivo de texto.
-     * Solo se lee la primera línea.
+     * Carga la clave desde un archivo de texto.
+     * <p>
+     * Lee la totalidad del contenido del archivo, incluyendo saltos de línea y espacios,
+     * y lo establece en el TextArea de clave. Esto permite claves multilinea.
+     * </p>
+     *
+     * @author Xiker, Salca (modifier)
      */
     @FXML
     private void cargarClave() {
@@ -131,10 +164,11 @@ public class MainController {
         File archivo = fileChooser.showOpenDialog(stage);
         if (archivo != null) {
             log.debug("Archivo de clave seleccionado: {}", archivo.getAbsolutePath());
-            try (BufferedReader br = new BufferedReader(new FileReader(archivo, StandardCharsets.UTF_8))) {
-                String linea = br.readLine();
-                claveTextField.setText(linea);
-                log.info("Clave cargada ({} caracteres).", linea == null ? 0 : linea.length());
+            try {
+                // Leer todo el contenido del archivo, incluyendo saltos de línea
+                String clave = new String(java.nio.file.Files.readAllBytes(archivo.toPath()), StandardCharsets.UTF_8);
+                claveTextField.setText(clave);
+                log.info("Clave cargada ({} caracteres).", clave.length());
             } catch (IOException e) {
                 log.error("Error al leer clave: {}", e.toString());
                 mostrarAlerta(bundle.getString("error.title"), e.getMessage());
@@ -145,7 +179,10 @@ public class MainController {
     }
 
     /**
-     * Carga texto plano o cifrado desde un archivo.
+     * Carga el texto de entrada desde un archivo.
+     * <p>El contenido completo se coloca en el TextArea de entrada.</p>
+     *
+     * @author Xiker
      */
     @FXML
     private void cargarEntrada() {
@@ -170,6 +207,9 @@ public class MainController {
 
     /**
      * Cifra el texto del área de entrada usando AES o Vigenère.
+     * <p>El resultado se muestra en el TextArea de resultado.</p>
+     *
+     * @author Xiker, Salca (modifier)
      */
     @FXML
     private void cifrar() {
@@ -211,6 +251,9 @@ public class MainController {
 
     /**
      * Descifra el texto del área de entrada usando AES o Vigenère.
+     * <p>El resultado se muestra en el TextArea de resultado.</p>
+     *
+     * @author Xiker, Salca (modifier)
      */
     @FXML
     private void descifrar() {
@@ -251,7 +294,9 @@ public class MainController {
     }
 
     /**
-     * Guarda el texto cifrado o descifrado en un archivo.
+     * Guarda el contenido del área de resultado en un archivo de texto.
+     *
+     * @author Xiker
      */
     @FXML
     private void guardarArchivo() {
@@ -288,13 +333,17 @@ public class MainController {
         }
     }
 
-    /** Cierra la aplicación. */
+    /** Cierra la aplicación y registra el evento.
+     * @author Xiker
+     */
     private void cerrarAplicacion() {
         log.info("Cerrando aplicación.");
         if (stage != null) stage.close();
     }
 
-    /** Abre el manual del usuario. */
+    /** Abre el manual del usuario en el navegador.
+     * @author Xiker
+     */
     private void abrirManual() {
         log.info("Abriendo manual del usuario.");
         if (app != null) {
@@ -306,7 +355,7 @@ public class MainController {
                     log.debug("Manual encontrado: {}", manualURL);
                     app.getHostServices().showDocument(manualURL.toExternalForm());
                 } else {
-                    log.warn("Manual no encontrado en el classpath: {}", manualPath);
+                    log.warn("Manual no encontrado: {}", manualPath);
                     mostrarAlerta(bundle.getString("error.title"),
                             bundle.getString("error.manualNotFound") + ": " + manualPath);
                 }
@@ -318,7 +367,9 @@ public class MainController {
         }
     }
 
-    /** Muestra un cuadro de ayuda informativa. */
+    /** Muestra un cuadro de ayuda informativa al usuario.
+     * @author Xiker
+     */
     private void mostrarAyuda() {
         log.info("Mostrando ventana de ayuda.");
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -328,7 +379,9 @@ public class MainController {
         alert.showAndWait();
     }
 
-    /** Muestra el cuadro "Acerca de". */
+    /** Muestra el cuadro "Acerca de" con información de la aplicación.
+     * @author Xiker
+     */
     private void mostrarAcercaDe() {
         log.info("Mostrando ventana Acerca de.");
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -338,7 +391,13 @@ public class MainController {
         alert.showAndWait();
     }
 
-    /** Muestra una alerta simple en pantalla. */
+    /**
+     * Muestra una alerta de advertencia.
+     *
+     * @param titulo  Título de la alerta
+     * @param mensaje Contenido de la alerta
+     * @author Xiker
+     */
     private void mostrarAlerta(String titulo, String mensaje) {
         log.debug("Mostrando alerta: {}", titulo);
         Alert alert = new Alert(Alert.AlertType.WARNING);
@@ -349,8 +408,10 @@ public class MainController {
     }
 
     /**
-     * Cambia el idioma de la interfaz.
-     * Recarga el FXML con el nuevo ResourceBundle.
+     * Cambia el idioma de la aplicación recargando el FXML con un nuevo ResourceBundle.
+     *
+     * @param idioma Código de idioma (ej. "es" o "en")
+     * @author Xiker
      */
     private void cambiarIdioma(String idioma) {
         log.info("Cambiando idioma a '{}'", idioma);
@@ -359,7 +420,13 @@ public class MainController {
             ResourceBundle bundleNuevo = ResourceBundle.getBundle("i18n.messages", locale);
 
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/MainView.fxml"), bundleNuevo);
-            Scene scene = new Scene(fxmlLoader.load(), stage.getWidth(), stage.getHeight());
+
+            double width = stage.getWidth();
+            double height = stage.getHeight();
+            Scene scene = new Scene(fxmlLoader.load());
+            stage.setScene(scene);
+            stage.setWidth(width);
+            stage.setHeight(height);
 
             MainController controller = fxmlLoader.getController();
             controller.setStage(stage);
