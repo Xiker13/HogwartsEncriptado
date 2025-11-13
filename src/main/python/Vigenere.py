@@ -19,7 +19,7 @@ Características principales:
 - Muestra mensajes claros de error o advertencia
 - No almacena claves en disco
 - Puede ser invocado desde la app Java (modo consola)
-@author Salca
+@author salca
 """
 
 # ========================= LIBRERÍAS =========================
@@ -105,19 +105,22 @@ def detectar_invisibles(cadena: str) -> List[str]:
 
 def normalizar_clave(clave: str) -> str:
     """
-    Normaliza la clave eliminando todos los caracteres que no sean letras A-Z,
-    incluyendo espacios, tabulaciones y saltos de línea.
+    Normaliza la clave eliminando todos los caracteres que no sean letras A-Z.
 
-    Args:
-        clave (str): Clave original.
+    El cifrado de Vigenère clásico opera únicamente sobre letras del alfabeto
+    inglés. Este método convierte la clave a mayúsculas y descarta cualquier
+    carácter no alfabético (números, tildes, signos, espacios...).
 
-    Returns:
-        str: Clave limpia compuesta solo por letras mayúsculas A-Z.
+    Parámetros
+    ----------
+    clave : str
+        Clave introducida por el usuario.
+
+    Retorna
+    -------
+    str
+        Clave limpia compuesta solo por letras mayúsculas A-Z.
     """
-    # Eliminar caracteres invisibles explícitamente
-    for c in CARACTERES_INVISIBLES + ['\n', '\r', '\t', ' ']:
-        clave = clave.replace(c, '')
-    # Convertir a mayúsculas y conservar solo A-Z
     return "".join(c for c in clave.upper() if c in string.ascii_uppercase)
 
 
@@ -129,16 +132,9 @@ def validar_datos(texto: str, clave: str) -> Tuple[bool, str]:
       - Que la clave no esté vacía.
       - Que no contenga caracteres invisibles (zero-width, BOM...).
       - Que, tras limpiarla, tenga una longitud mínima definida por MINIMO_CLAVE.
+      - Que la clave original no contenga caracteres NO válidos (números, guiones, etc.).
       - Que el texto no esté vacío.
       - Que el texto contenga al menos una letra válida A-Z.
-      - Muestra un aviso si la clave contenía caracteres eliminados al normalizarse.
-
-    Parámetros
-    ----------
-    texto : str
-        Texto que se desea cifrar o descifrar.
-    clave : str
-        Clave de cifrado proporcionada por el usuario.
 
     Retorna
     -------
@@ -154,9 +150,10 @@ def validar_datos(texto: str, clave: str) -> Tuple[bool, str]:
     # 2. Buscar caracteres invisibles en la clave
     invisibles = detectar_invisibles(clave)
     if invisibles:
+        codigos = ", ".join(f"U+{ord(c):04X}" for c in invisibles)
         return False, (
-            f"⚠️ La clave contiene caracteres invisibles o ilegales: "
-            f"{', '.join(invisibles)}"
+            f"⚠️ La clave contiene caracteres invisibles o ilegales "
+            f"({codigos}). Revísala y vuelve a introducirla."
         )
 
     # 3. Normalizar la clave (solo letras A-Z)
@@ -164,18 +161,20 @@ def validar_datos(texto: str, clave: str) -> Tuple[bool, str]:
 
     # Si no queda nada tras limpiar, no es válida
     if not clave_normalizada:
-        return False, " La clave debe contener al menos una letra A-Z."
+        return False, "La clave debe contener al menos una letra A-Z."
 
     # Comprobar longitud mínima
     if len(clave_normalizada) < MINIMO_CLAVE:
-        return False, f" La clave debe tener al menos {MINIMO_CLAVE} letras."
+        return False, f"La clave debe tener al menos {MINIMO_CLAVE} letras."
 
-    # 4. Avisar si la clave original tenía caracteres no válidos
+    # 4. Si la clave original tenía caracteres no válidos (números, guiones, acentos, etc.),
+    #    lo consideramos un error y se informa al usuario.
     if clave_normalizada != clave.upper():
-       logging.warning(
-           f"Se han eliminado caracteres no validos de la clave. "
-           f"Clave usada realmente: {clave_normalizada}"
-       )
+        return False, (
+            "⚠️ La clave contiene caracteres no válidos (solo se permiten letras A-Z).\n"
+            f"Clave introducida: {clave}\n"
+            f"Parte válida de la clave sería: {clave_normalizada}"
+        )
 
     # 5. Validar el texto
     if not texto or not texto.strip():
@@ -183,9 +182,10 @@ def validar_datos(texto: str, clave: str) -> Tuple[bool, str]:
 
     texto_limpio = limpiar_texto(texto)
     if not texto_limpio:
-        return False, " El texto debe contener al menos una letra A-Z."
+        return False, "El texto debe contener al menos una letra A-Z."
 
     return True, ""
+
 
 
 def leer_fichero(path: str) -> str:
