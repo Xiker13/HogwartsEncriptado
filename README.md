@@ -47,7 +47,7 @@ El proyecto integra **Java 23**, **JavaFX 13** y **Python 3.13**, combinando amb
 - Java 23
 - JavaFX 13
 - Python 3.13
-
+- Navegador
 
 ---
 
@@ -71,11 +71,19 @@ Lanzador.java
 
 ### 4️⃣ Ejemplos de uso
 
-#### 🔐 Cifrado AES (Java)
+#### 🔐 Cifrado AES textos (Java)
 1. Introducir texto
 2. Introducir clave
 3. Seleccionar AES
 4. Cifrar
+
+#### 🔐 Cifrado AES imagenes (Java)
+1. Seleccionar AES 
+2. Introducir clave 
+3. Pinchar en cifrar 
+4. Seleccionar imagen 
+5. Seleccionar lugar donde guardarlo
+
 
 #### 🔡 Cifrado Vigenère (Python)
 1. Seleccionar Vigenère
