@@ -100,6 +100,8 @@ public class App extends Application {
      * @param args argumentos de línea de comandos
      */
     public static void main(String[] args) {
+        System.out.println("Hogwarts Encriptado Main alzanzado");
+
         log.info("Ejecutando método main(): lanzamiento de JavaFX.");
         launch();  // Llama internamente a start(Stage)
     }

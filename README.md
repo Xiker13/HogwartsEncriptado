@@ -20,6 +20,7 @@ El proyecto integra **Java 23**, **JavaFX 13** y **Python 3.13**, combinando amb
 
 ### 📌 2. Lógica de Cifrado (Java – AES)
 - `AESCipher.java` – Implementa cifrado y descifrado AES.
+- `AESImageCipher` – Implementa cifrado y descifrado AES.
 
 ### 📌 3. Integración con Python
 - `PythonVigenereService.java` – Ejecuta el script Python y recibe resultados.
@@ -37,7 +38,7 @@ El proyecto integra **Java 23**, **JavaFX 13** y **Python 3.13**, combinando amb
 - CSS → `estilo/estilo.css`
 - FXML → `fxml/MainView.fxml`
 - Imágenes → `imagenes/`
-- i18n → `i18n/`
+- Traduccion → `i18n/`
 
 ---
 
