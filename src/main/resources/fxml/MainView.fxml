@@ -8,7 +8,7 @@
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.TextArea?>
-<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
@@ -39,6 +39,15 @@
                     <MenuItem fx:id="enMenuItem" text="%menuitem.en" />
                 </items>
             </Menu>
+            <Menu fx:id="temaMenu" text="%menu.tema">
+                <items>
+                    <MenuItem fx:id="temaClasicoMenuItem" text="%menuitem.clasico" />
+                    <MenuItem fx:id="temaBibliotecaMenuItem" text="%menuitem.biblioteca" />
+                    <MenuItem fx:id="temaNocturnaMenuItem" text="%menuitem.nocturna" />
+                </items>
+            </Menu>
+
+
         </menus>
     </MenuBar>
 
@@ -77,11 +86,19 @@
             <Label minHeight="20" text="%label.result" />
             <TextArea fx:id="resultadoTextArea" editable="false" minHeight="200.0" minWidth="200" wrapText="true" VBox.vgrow="ALWAYS" />
 
-            <HBox spacing="5">
-                <TextField fx:id="nombreArchivoTextField" minHeight="35.0" promptText="%textfield.filename" HBox.hgrow="ALWAYS" />
-                <Button fx:id="guardarArchivoButton" minHeight="35" onAction="#guardarArchivo" text="%button.save" />
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="%label.saveType" />
+                <RadioButton fx:id="radioTexto" selected="true" text="%radio.text">
+                    <toggleGroup>
+                        <ToggleGroup fx:id="saveTypeGroup" />
+                    </toggleGroup>
+                </RadioButton>
+                <RadioButton fx:id="radioImagen" text="%radio.image" toggleGroup="$saveTypeGroup" />
+                <Button fx:id="guardarArchivoButton" minHeight="35" maxWidth="Infinity" onAction="#guardarArchivo" text="%button.save" HBox.hgrow="ALWAYS" />
             </HBox>
+
         </VBox>
+
       <opaqueInsets>
          <Insets />
       </opaqueInsets>

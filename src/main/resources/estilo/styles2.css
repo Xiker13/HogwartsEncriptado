@@ -1,54 +1,56 @@
 /* ------------------------ */
-/* 📚 TEMA BIBLIOTECA HOGWARTS */
+/* 🌙 TEMA SLYTHERIN */
 /* ------------------------ */
 .root {
-    -fx-background-color: #f5e9d5;
-    -fx-text-fill: #654321;
+    -fx-background-color: #0f1f0f;
+    -fx-text-fill: #a5d6a7;
     -fx-font-family: "Segoe UI", "Arial", sans-serif;
 }
 
 /* ------------------------ */
-/* 📖 CONTENEDOR PRINCIPAL */
+/* 🪶 CONTENEDOR PRINCIPAL */
 /* ------------------------ */
 #rootPane {
-    -fx-background-radius: 12;
-    -fx-border-radius: 12;
+    -fx-background-radius: 0;   /* Sin curvatura */
+    -fx-border-radius: 0;       /* Sin curvatura */
     -fx-border-width: 3;
     -fx-padding: 0;
-    -fx-border-color: #8b4513;
-    -fx-background-color: #f5e9d5;
-    -fx-effect: dropshadow(three-pass-box, rgba(139, 69, 19, 0.3), 10, 0, 0, 0);
+    -fx-border-color: #2c5530;
+    -fx-background-color: linear-gradient(to bottom, #1a2f1a, #0f1f0f);
+    -fx-effect: dropshadow(three-pass-box, rgba(44, 85, 48, 0.4), 12, 0, 0, 0);
 }
 
 /* ------------------------ */
 /* ✨ BOTONES */
 /* ------------------------ */
 .button {
-    -fx-font-size: 14px;
-    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
     -fx-border-radius: 6px;
     -fx-background-radius: 6px;
     -fx-padding: 10 20 10 20;
     -fx-text-fill: #ffffff;
-    -fx-background-color: #a0522d;
+    -fx-background-color: #4a7c59;
     -fx-min-width: 100%;
     -fx-min-height: 35px;
     -fx-cursor: hand;
-    -fx-border-color: #8b4513;
+    -fx-border-color: #2c5530;
     -fx-border-width: 1;
+    -fx-effect: dropshadow(three-pass-box, rgba(76, 175, 80, 0.25), 5, 0, 0, 2);
 }
 
 .button:hover {
-    -fx-background-color: #b5651d;
-    -fx-effect: innershadow(three-pass-box, rgba(139, 69, 19, 0.3), 5, 0, 0, 2);
+    -fx-background-color: #5a8c69;
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
 }
 
 /* ------------------------ */
 /* 🪶 ETIQUETAS */
 /* ------------------------ */
 .label {
-    -fx-font-weight: bold;
-    -fx-text-fill: #654321;
+    -fx-font-weight: 600;
+    -fx-text-fill: #a5d6a7;
 }
 
 /* ------------------------ */
@@ -58,19 +60,19 @@
 .text-field {
     -fx-border-radius: 6px;
     -fx-background-radius: 6px;
-    -fx-border-color: #bcaaa4;
+    -fx-border-color: #4a7c59;
     -fx-border-width: 1px;
-    -fx-background-color: #fff8e1;
-    -fx-text-fill: #5d4037;
+    -fx-background-color: #2e3d2e;
+    -fx-text-fill: #c8e6c9;
 }
 
 .text-area .content {
-    -fx-background-color: #fff8e1;
-    -fx-text-fill: #5d4037;
+    -fx-background-color: #2e3d2e;
+    -fx-text-fill: #c8e6c9;
 }
 
 .text-field {
-    -fx-prompt-text-fill: #8d6e63;
+    -fx-prompt-text-fill: #81c784;
 }
 
 /* ------------------------ */
@@ -78,33 +80,33 @@
 /* ------------------------ */
 .radio-button {
     -fx-font-weight: normal;
-    -fx-text-fill: #654321;
+    -fx-text-fill: #a5d6a7;
 }
 
 .radio-button .radio {
-    -fx-border-color: #a1887f;
-    -fx-background-color: #fff8e1;
+    -fx-border-color: #4a7c59;
+    -fx-background-color: #2e3d2e;
 }
 
 /* ------------------------ */
 /* 📚 MENÚS */
 /* ------------------------ */
 .menu-bar {
-    -fx-background-color: #e6d2b5;
+    -fx-background-color: #1a2f1a;
     -fx-padding: 0;
-    -fx-border-color: #8b4513;
+    -fx-border-color: #2c5530;
     -fx-border-width: 0 0 1 0;
 }
 
 .menu {
-    -fx-font-weight: bold;
-    -fx-text-fill: #654321;
+    -fx-font-weight: 600;
+    -fx-text-fill: #a5d6a7;
 }
 
 .menu-item {
-    -fx-background-color: #e6d2b5;
+    -fx-background-color: #1a2f1a;
 }
 
 .menu-item:hover {
-    -fx-background-color: #d6c2a5;
+    -fx-background-color: #2a3f2a;
 }

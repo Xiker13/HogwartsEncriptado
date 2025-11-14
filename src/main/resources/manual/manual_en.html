@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HogwartsEncriptado Manual</title>
+    <title>Hogwarts Encrypted Manual</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -18,32 +18,13 @@
             box-shadow: 0 2px 6px rgba(0,0,0,0.1);
             margin-bottom: 20px;
         }
-        .video-link {
-            display: inline-block;
-            padding: 10px 15px;
-            background-color: #ff0000;
-            color: #fff;
-            text-decoration: none;
-            border-radius: 5px;
-            font-weight: bold;
-            margin-top: 10px;
-        }
-        .video-link:hover {
-            background-color: #cc0000;
-        }
         ul { margin-top: 5px; }
         li { margin-bottom: 5px; }
     </style>
 </head>
 <body>
 
-<h1>HogwartsEncriptado Manual</h1>
-
-<div class="seccion">
-    <h2>Video Tutorial</h2>
-    <p>To watch a practical tutorial on how to use the application, click the following link:</p>
-    <a class="video-link" href="https://www.youtube.com/watch?v=xvFZjo5PgG0" target="_blank">Watch video on YouTube</a>
-</div>
+<h1>Hogwarts Encrypted Manual</h1>
 
 <div class="seccion">
     <h2>Top Menu</h2>
@@ -52,7 +33,9 @@
         <li><strong>File → Close:</strong> Closes the application.</li>
         <li><strong>Help → Manual:</strong> Opens this manual.</li>
         <li><strong>Help → Help:</strong> Additional information about the application.</li>
-        <li><strong>About → About Us:</strong> Information about the development team.</li>
+        <li><strong>About → About...</strong> Information about the development team and app version.</li>
+        <li><strong>Language:</strong> Allows changing the application language.</li>
+        <li><strong>Theme:</strong> Changes the interface theme (Classic, Hogwarts Library, Slytherin).</li>
     </ul>
 </div>
 
@@ -67,10 +50,10 @@
 
 <div class="seccion">
     <h2>Key</h2>
-    <p>Enter the key to use for encryption or decryption:</p>
+    <p>Enter the key to be used for encryption or decryption:</p>
     <ul>
         <li>Type the key directly into the text field.</li>
-        <li>Or click <strong>"Load File"</strong> to select a file containing the key.</li>
+        <li>Or click <strong>"Load key"</strong> to select a file containing the key.</li>
     </ul>
 </div>
 
@@ -78,17 +61,41 @@
     <h2>Main Area</h2>
     <p>It is divided into two sections: input and result.</p>
     <ul>
-        <li><strong>Input:</strong> Enter the text to encrypt/decrypt or load a file with the content.</li>
+        <li><strong>Input:</strong> Type the text to encrypt/decrypt or load a file with the content.</li>
         <li><strong>Result:</strong> The encrypted or decrypted text will appear here.</li>
-        <li>To save the result, enter the filename and click <strong>"Save File"</strong>.</li>
+        <li>To save the result, enter the path and click <strong>"Save"</strong>.</li>
     </ul>
 </div>
 
 <div class="seccion">
     <h2>Encrypt / Decrypt Buttons</h2>
     <ul>
-        <li><strong>Encrypt:</strong> Applies the selected algorithm to the input and displays the result.</li>
-        <li><strong>Decrypt:</strong> Reverses the encryption using the selected algorithm and shows the original text.</li>
+        <li><strong>Encrypt:</strong> Applies the selected algorithm to the input and shows the result.</li>
+        <li><strong>Decrypt:</strong> Reverts the encryption and shows the original text.</li>
+    </ul>
+</div>
+
+<div class="seccion">
+    <h2>Image Mode</h2>
+    <p>To encrypt or decrypt images (only available using AES):</p>
+    <ul>
+        <li>Enable the <strong>Image</strong> option in the "Save as" section.</li>
+        <li>Enter or load the key as usual.</li>
+        <li>Click <strong>Encrypt</strong> or <strong>Decrypt</strong>.</li>
+        <li>You will first be prompted to select the image file to process.</li>
+        <li>Then you will be asked where to save the resulting image.</li>
+        <li>After completion, a success message will appear: "Image encrypted successfully" or "Image decrypted successfully".</li>
+    </ul>
+</div>
+
+<div class="seccion">
+    <h2>Common Errors</h2>
+    <ul>
+        <li><strong>Key required:</strong> No key was entered.</li>
+        <li><strong>Empty text:</strong> No text was entered.</li>
+        <li><strong>Encryption/Decryption error:</strong> There was a problem processing the file or text.</li>
+        <li><strong>Nothing to save:</strong> Cannot save if there is no result.</li>
+        <li><strong>Manual not found:</strong> Could not locate the manual file.</li>
     </ul>
 </div>
 
